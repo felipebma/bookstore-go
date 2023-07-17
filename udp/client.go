@@ -35,9 +35,6 @@ func main() {
 			fmt.Println("Write data failed:", err.Error())
 			os.Exit(1)
 		}
-		end := time.Now()
-
-		times = append(times, end.Sub(start).Nanoseconds())
 
 		// buffer to get data
 		received := make([]byte, 1024)
@@ -46,6 +43,9 @@ func main() {
 			fmt.Println("Read data failed:", err.Error())
 			os.Exit(1)
 		}
+		end := time.Now()
+
+		times = append(times, end.Sub(start).Nanoseconds())
 
 		fmt.Println(string(received))
 	}
