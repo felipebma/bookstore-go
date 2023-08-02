@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net"
 	"sort"
@@ -19,7 +20,6 @@ type Book struct {
 }
 
 func main() {
-	books := [7]string{"Harry Potter e a Pedra Filosofal", "Harry Potter e a Camara Secreta", "Harry Potter e o Prisioneiro de Azkaban", "Harry Potter e o Calice de Fogo", "Harry Potter e a Ordem da Fenix", "Harry Potter e o Enigma do Principe", "Harry Potter e as Reliquias da Morte"}
 	udpServer, err := net.ListenPacket(TYPE, PORT)
 	if err != nil {
 		log.Fatal(err)
@@ -32,15 +32,19 @@ func main() {
 		if err != nil {
 			continue
 		}
-		handleConnection(udpServer, addr, buf, books)
+		go handleConnection(udpServer, addr, buf)
 	}
 }
 
-func handleConnection(udpServer net.PacketConn, addr net.Addr, buf []byte, books [7]string) {
+func handleConnection(udpServer net.PacketConn, addr net.Addr, buf []byte) {
+	books := [7]string{"Harry Potter e a Pedra Filosofal", "Harry Potter e a Camara Secreta", "Harry Potter e o Prisioneiro de Azkaban", "Harry Potter e o Calice de Fogo", "Harry Potter e a Ordem da Fenix", "Harry Potter e o Enigma do Principe", "Harry Potter e as Reliquias da Morte"}
 
-	clientRequest := string(buf)
-	keywords := strings.Split(clientRequest, " ")
+	clientRequest := strings.Trim(string(buf), "\n")
+	keywords := append([]string{"\n"}, strings.Split(clientRequest, " ")...)
 	rep := booksWithKeyWords(books, keywords)
+	fmt.Printf("%v", rep)
+	println()
+
 	ans := ""
 
 	for i := 0; i < len(rep); i++ {
@@ -53,14 +57,24 @@ func handleConnection(udpServer net.PacketConn, addr net.Addr, buf []byte, books
 	udpServer.WriteTo([]byte(ans+"\n"), addr)
 }
 
+func sortBooks(books []Book) []Book {
+	sort.SliceStable(books, func(i, j int) bool {
+		return books[i].keywords > books[j].keywords
+	})
+	return books
+}
+
 func findKeyWords(book string, keywords []string) int {
 	count := 0
 	for _, keyword := range keywords {
 		keyword = strings.Trim(keyword, "\n")
-		if strings.Contains(book, keyword) {
+		if strings.Index(book, keyword) > -1 {
 			count = count + 1
 		}
 	}
+	println(book)
+	println(count)
+	println()
 	return count
 }
 
@@ -74,11 +88,4 @@ func booksWithKeyWords(books [7]string, keywords []string) []Book {
 	}
 	sortBooks(response)
 	return response
-}
-
-func sortBooks(books []Book) []Book {
-	sort.SliceStable(books, func(i, j int) bool {
-		return books[i].keywords > books[j].keywords
-	})
-	return books
 }

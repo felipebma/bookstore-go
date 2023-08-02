@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -53,5 +54,5 @@ func main() {
 		times = append(times, end.Sub(start).Nanoseconds())
 		fmt.Print(result)
 	}
-	// fmt.Fprintf(os.Stderr, strings.Trim(strings.Join(strings.Fields(fmt.Sprint(times)), ","), "[]"))
+	fmt.Fprintf(os.Stderr, strings.Trim(strings.Join(strings.Fields(fmt.Sprint(times)), ","), "[]"))
 }

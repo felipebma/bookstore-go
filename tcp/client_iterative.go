@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -32,26 +33,22 @@ func main() {
 		}
 	}(conn)
 
-	for i := 0; i < 10000; i++ {
+	for {
+		reader := bufio.NewReader(os.Stdin)
+		fmt.Print(">> ")
+		text, _ := reader.ReadString('\n')
+		if strings.TrimSpace(string(text)) == "STOP" {
+			fmt.Println("TCP client exiting...")
+			break
+		}
+
 		start := time.Now()
-		// envia mensagem para o servidor
-		req := "Harry Potter"
-		_, err = fmt.Fprintf(conn, req+"\n")
-		if err != nil {
-			fmt.Println(err)
-			break
-		}
-
-		// recebe resposta do servidor
-		result, err := bufio.NewReader(conn).ReadString('\n')
-		if err != nil {
-			fmt.Println(err)
-			break
-		}
-
+		fmt.Fprintf(conn, text+"\n")
+		message, _ := bufio.NewReader(conn).ReadString('\n')
+		fmt.Print("->: " + message)
 		end := time.Now()
 		times = append(times, end.Sub(start).Nanoseconds())
-		fmt.Print(result)
+
 	}
-	// fmt.Fprintf(os.Stderr, strings.Trim(strings.Join(strings.Fields(fmt.Sprint(times)), ","), "[]"))
+	fmt.Fprintf(os.Stderr, strings.Trim(strings.Join(strings.Fields(fmt.Sprint(times)), ","), "[]"))
 }

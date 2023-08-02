@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"strings"
+	"time"
 )
 
 func main() {
@@ -23,8 +25,11 @@ func main() {
 	//close the connection
 	defer conn.Close()
 
+	var times []int64
+
 	for i := 0; i < 10000; i++ {
 
+		start := time.Now()
 		_, err = conn.Write([]byte("Harry Potter"))
 		if err != nil {
 			fmt.Println("Write data failed:", err.Error())
@@ -38,7 +43,11 @@ func main() {
 			fmt.Println("Read data failed:", err.Error())
 			os.Exit(1)
 		}
+		end := time.Now()
+
+		times = append(times, end.Sub(start).Nanoseconds())
 
 		fmt.Println(string(received))
 	}
+	fmt.Fprintf(os.Stderr, strings.Trim(strings.Join(strings.Fields(fmt.Sprint(times)), ","), "[]"))
 }

@@ -1,9 +1,11 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"net"
 	"os"
+	"strings"
 )
 
 func main() {
@@ -23,9 +25,17 @@ func main() {
 	//close the connection
 	defer conn.Close()
 
-	for i := 0; i < 10000; i++ {
+	for {
 
-		_, err = conn.Write([]byte("Harry Potter"))
+		reader := bufio.NewReader(os.Stdin)
+		fmt.Print(">> ")
+		text, _ := reader.ReadString('\n')
+		if strings.TrimSpace(string(text)) == "STOP" {
+			fmt.Println("UDP client exiting...")
+			break
+		}
+
+		_, err = conn.Write([]byte(text))
 		if err != nil {
 			fmt.Println("Write data failed:", err.Error())
 			os.Exit(1)
