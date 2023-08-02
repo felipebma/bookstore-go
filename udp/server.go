@@ -36,7 +36,10 @@ func main() {
 }
 
 func handleConnection(udpServer net.PacketConn, addr net.Addr, buf []byte) {
-	books := [7]string{"Harry Potter e a Pedra Filosofal", "Harry Potter e a Camara Secreta", "Harry Potter e o Prisioneiro de Azkaban", "Harry Potter e o Calice de Fogo", "Harry Potter e a Ordem da Fenix", "Harry Potter e o Enigma do Principe", "Harry Potter e as Reliquias da Morte"}
+	books := [7]string{"Harry Potter e a Pedra Filosofal", "Harry Potter e a Camara Secreta",
+		"Harry Potter e o Prisioneiro de Azkaban", "Harry Potter e o Calice de Fogo",
+		"Harry Potter e a Ordem da Fenix", "Harry Potter e o Enigma do Principe",
+		"Harry Potter e as Reliquias da Morte"}
 
 	clientRequest := strings.Trim(string(buf), "\n")
 	keywords := strings.Split(clientRequest, " ")

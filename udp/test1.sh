@@ -1,3 +1,3 @@
 #!/bin/bash
 
-go run client.go 2> teste1.csv
+go run client_metrics.go 2> teste1.csv
